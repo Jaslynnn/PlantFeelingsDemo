@@ -41,7 +41,7 @@ let timer = 0;        // time since last follow (ms)
 let humDiv;
 let followDiv;
 //Humidity and followTime variables
-let humidity = 60;
+let humidity = 10;
 let followTime = 0;
 
 // Buddy/ad popup
@@ -83,6 +83,7 @@ function setup() {
     cnv.style('position', 'absolute');
     cnv.style('top', '0');
     cnv.style('left', '0');
+    cnv.style("pointer-events", "none");
     port = createSerial(); // creates the Serial Port
 
     lastFollowTime = millis(); // initialize timer
@@ -103,6 +104,32 @@ function setup() {
     humDiv = select("#humidityVal");
     followDiv = select("#followTimeVal");
 
+    // Create buttons
+    incBtn = createButton("water");
+    incBtn.addClass("pixel-btn");
+
+    decBtn = createButton("unwater");
+    decBtn.addClass("pixel-btn");
+
+    // Attach to div
+    let controls = select("#humidity-controls");
+    controls.child(incBtn);
+    controls.child(decBtn);
+
+    // Example functionality
+
+
+
+    incBtn.mousePressed(() => changeHumidity(5));
+
+
+    decBtn.mousePressed(() => changeHumidity(-5));
+
+
+
+
+
+
 
 }
 
@@ -117,7 +144,7 @@ function draw() {
         if (serialData[0]) {
             console.log(serialData);
             humidity = serialData;
-            humDiv.html(humidity);
+            humDiv.html(humidity + "%");
         }
     }
 
@@ -448,5 +475,12 @@ function drawSprite() {
         frameWidth, frameHeight
     );
     pop();
+}
+
+
+function changeHumidity(amount) {
+    humidity = constrain(humidity + amount, 0, 100); // keeps it within 0–100
+    humDiv.html(humidity + "%");
+
 }
 
